@@ -1,0 +1,20 @@
+{
+  "name": "BlockBreaker",
+  "version": "0.1.0",
+  "main": "index.js",
+  "author": "cobysy <cobysy@users.noreply.github.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "serve": "serve dist",
+    "js-build": "browserify src/game.ts --debug -p [tsify] -o dist/js/bundle.js",
+    "lint": "tslint -p . -t verbose"
+  },
+  "devDependencies": {
+    "browserify": "^16.2.3",
+    "serve": "^10.0.2",
+    "tsify": "^4.0.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.3"
+  }
+}

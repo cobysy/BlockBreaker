@@ -1,2 +1,4 @@
-tmp
-out
+node_modules/
+dist/js/
+dist/css/
+tmp/
