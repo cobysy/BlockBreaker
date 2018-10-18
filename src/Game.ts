@@ -18,77 +18,115 @@ export class Game {
     public static img_gameover: HTMLImageElement;
     public static img_logo: HTMLImageElement;
     public static img_1up: HTMLImageElement;
+    public static img_cursor: HTMLImageElement;
 
     public static main() {
         // new Game(new GamePanel(Game.WIDTH, HEIGHT));
 
-        // tslint:disable-next-line:no-unused-expression
-        new Game();
+        new Game().run();
     }
 
     private static RUNCHECK_INTERVAL = 120;
-    public url_menuMP3?: HTMLAudioElement;
-    public url_mainGameMP3?: HTMLAudioElement;
-    public url_explosion?: HTMLAudioElement;
-    public url_coin?: HTMLAudioElement;
+    public static url_menuMP3?: HTMLAudioElement;
+    public static url_mainGameMP3?: HTMLAudioElement;
+    public static url_explosion?: HTMLAudioElement;
+    public static url_coin?: HTMLAudioElement;
     // private static Cursor cursor_DEFAULT, cursor_MY_CROSS;
-    // private static final String RESOURCE = "/myGame/resources/";
+    private static RESOURCE = "resources/";
 
     // private final Component     screen;
-    private blockManager: BlockManager;
-    private ballManager: BallManager;
-    private scoreRenderer: ScoreRenderer;
-    private sessionRenderer: SessionRenderer;
+    private blockManager!: BlockManager;
+    private ballManager!: BallManager;
+    private scoreRenderer!: ScoreRenderer;
+    private sessionRenderer!: SessionRenderer;
 
     private gameState: GameState;
     private runChecker = Game.RUNCHECK_INTERVAL;
 
     // private MP3Player mp3Menu, mp3mainGame;
 
-    // static init() {    //最初に一度だけ実行: 画像,音声読み込み
-    //     console.log("Game static init");
-    //     try {
-    //         img_ball        = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "ball.png"));
-    //         img_block       = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "block-dark.png"));
-    //         img_bonusPanel  = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "bonusPanel.png"));
-    //         img_hexagonBack = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "hexagon-back.jpeg"));
-    //         img_floor       = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "floor.png"));
-    //         img_glossPanel  = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "gloss-panel.png"));
-    //         img_gameover    = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "gameover.jpg"));
-    //         img_logo        = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "logo.jpeg"));
-    //         img_1up         = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "1UP.png"));
+    private static checkImage(url: string) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.src = url;
+        });
+    }
 
-    //         // マウスカーソル
-    //         cursor_MY_CROSS = Toolkit.getDefaultToolkit().createCustomCursor(
-    //                 ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "cursor.png")),
-    //                 new Point(10, 10),
-    //                 "myCrossCursor"
-    //         );
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //         System.exit(2);
-    //     }
-    //     cursor_DEFAULT = new Cursor(Cursor.DEFAULT_CURSOR);
-    //     url_menuMP3     = Game.class.getResource(RESOURCE + "dance.MP3");
-    //     url_mainGameMP3 = Game.class.getResource(RESOURCE + "digitalworld.MP3");
-    //     url_explosion   = Game.class.getResource(RESOURCE + "explosion.MP3");
-    //     url_coin        = Game.class.getResource(RESOURCE + "coin.MP3");
-    // }
+    private init(): Promise<void> {    // 最初に一度だけ実行: 画像,音声読み込み
+        console.log("Game static init");
 
-    private getTimestamp: () => number;
+        return new Promise((resolve) => {
+                Promise.all([
+                  Game.RESOURCE + "ball.png",
+                  Game.RESOURCE + "block-dark.png",
+                  Game.RESOURCE + "bonusPanel.png",
+                  Game.RESOURCE + "hexagon-back.jpeg",
+                  Game.RESOURCE + "floor.png",
+                  Game.RESOURCE + "cursor.png",
+                 ].map(Game.checkImage))
+            .then((r) => {
+                Game.img_ball = r.shift() as HTMLImageElement;
+                Game.img_block = r.shift() as HTMLImageElement;
+                Game.img_bonusPanel = r.shift() as HTMLImageElement;
+                Game.img_hexagonBack = r.shift() as HTMLImageElement;
+                Game.img_floor = r.shift() as HTMLImageElement;
+                Game.img_cursor = r.shift() as HTMLImageElement;
+                resolve();
+            });
+        });
+            // img_ball      = new ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "ball.png"));
+            // img_block       = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "block-dark.png"));
+            // img_bonusPanel  = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "bonusPanel.png"));
+            // Game.img_hexagonBack = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "hexagon-back.jpeg"));
+            // img_floor       = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "floor.png"));
+            // img_glossPanel  = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "gloss-panel.png"));
+            // img_gameover    = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "gameover.jpg"));
+            // img_logo        = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "logo.jpeg"));
+            // img_1up         = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "1UP.png"));
+
+            // マウスカーソル
+            // cursor_MY_CROSS = Toolkit.getDefaultToolkit().createCustomCursor(
+            //         ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "cursor.png")),
+            //         new Point(10, 10),
+            //         "myCrossCursor"
+            // );
+        // } catch (e) {
+        //     console.error(e);
+        // }
+        // cursor_DEFAULT = new Cursor(Cursor.DEFAULT_CURSOR);
+        // url_menuMP3     = Game.class.getResource(RESOURCE + "dance.MP3");
+        // url_mainGameMP3 = Game.class.getResource(RESOURCE + "digitalworld.MP3");
+        // url_explosion   = Game.class.getResource(RESOURCE + "explosion.MP3");
+        // url_coin        = Game.class.getResource(RESOURCE + "coin.MP3");
+    }
+
+    private getTimestamp = () => 0;
 
     // private Game(final BufferingRenderer renderer)
     constructor() {
         this.gameState = new GameState();
         this.gameState.state = State.CLICK_WAIT;
         // this.screen = (Component) renderer;
+    }
+
+    public run() {
+        this.init()
+            .then(() => this.runAfterResourcesLoaded());
+    }
+
+    private runAfterResourcesLoaded() {
         this.blockManager = new BlockManager(Game.img_block);
         this.ballManager = new BallManager(Game.img_ball, this.blockManager.getBlocks());
         this.scoreRenderer = new ScoreRenderer();
         this.sessionRenderer = new SessionRenderer();
 
+        const canvas = document.getElementById("gamecanvas") as HTMLCanvasElement;
+        canvas.width = Game.WIDTH;
+        canvas.height = Game.HEIGHT;
+
         // 初期のカーソル
-        // this.screen.setCursor(cursor_DEFAULT);
+        canvas.style.cursor = "url('" + Game.img_cursor.src + "'), auto";
 
         // マウスやキーのイベントリスナーの設定
         // this.eventListenInit(this.screen);
@@ -118,8 +156,6 @@ export class Game {
             }
         }
 
-        // test
-        const canvas = new HTMLCanvasElement();
         const g2d = canvas.getContext("2d") as CanvasRenderingContext2D;
 
         // engine
@@ -130,6 +166,7 @@ export class Game {
         while (running) {
             this.update();
             this.render(g2d);
+            break;
         }
     }
 

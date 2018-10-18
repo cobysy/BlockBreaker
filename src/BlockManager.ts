@@ -18,29 +18,39 @@ export class BlockManager {
     private static BONUS_PROBABILITY = 70;    // スターが1行の中に出る確率
     private static NUM_VOID = 3;          // 空白の数
 
-    private img_blocks: HTMLImageElement[] = [];
+    private static img_blocks: HTMLImageElement[] = [];
     private blocks: Block[] = [];
 
     private blockDownSpeed = 0.0;
     private delay = 0;
     private movedDist = 0.0;
 
-    constructor(src: HTMLImageElement) {
-        for (let i = 0; i < BlockManager.NUM_BLOCK_COLOR; i++) {
-            const cp = new HTMLImageElement();
-            Object.assign(cp, src);
-            this.img_blocks[i] = cp;
-
-        }
-        // カラフルなブロックの生成
-        // ImageEffect.addRGB(img_blocks[0], 180, 0, 0);
-        // ImageEffect.addRGB(img_blocks[1], 0, 180, 0);
-        // ImageEffect.addRGB(img_blocks[2], 0, 0, 220);
-        // ImageEffect.addRGB(img_blocks[3], 150, 150, -20);
-
+    constructor(private src_img: HTMLImageElement) {
     }
 
     public init() {
+        if (!BlockManager.img_blocks.length) {
+            for (let i = 0; i < BlockManager.NUM_BLOCK_COLOR; i++) {
+                const canvas = document.createElement("canvas");
+                canvas.width = Block.WIDTH;
+                canvas.height = Block.HEIGHT;
+                const context = canvas.getContext("2d")!;
+                context.drawImage(this.src_img, 0, 0);
+
+                // カラフルなブロックの生成
+                context.globalCompositeOperation = "overlay";
+                if (i == 0) { context.fillStyle = "rgb(180, 0, 0)"; }
+                else if (i == 1) { context.fillStyle = "rgb(0, 180, 0)"; }
+                else if (i == 2) { context.fillStyle = "rgb(0, 0, 220)"; }
+                else if (i == 3) { context.fillStyle = "rgb(150, 150, -20)"; }
+                context.fillRect(0, 0, Block.WIDTH, Block.HEIGHT);
+                const cp = new Image();
+                cp.src = canvas.toDataURL();
+                console.log(cp.src);
+                BlockManager.img_blocks.push(cp);
+            }
+        }
+
         this.blocks = [];
 
         for (let i = 0; i < BlockManager.NUM_BLOCK_VERTICAL; ++i) {
@@ -161,7 +171,7 @@ export class BlockManager {
             } else {
                 const x = BlockManager.OFFSET_X + i * (Block.WIDTH + BlockManager.MARGIN_X);
                 const HP = 1 + ballCount + Math.trunc(Math.random() * ballCount);
-                list.push(new Block(this.img_blocks[Math.trunc(Math.random() * BlockManager.NUM_BLOCK_COLOR)], x, y, HP));
+                list.push(new Block(BlockManager.img_blocks[Math.trunc(Math.random() * BlockManager.NUM_BLOCK_COLOR)], x, y, HP));
             }
         }
 

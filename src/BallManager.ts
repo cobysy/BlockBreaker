@@ -10,8 +10,8 @@ import { Sprite } from "./Sprite";
 
 export class BallManager {
     public static  DEFAULT_BALL_COUNT = 3;     // ボールの数の初期値
-    private static DEFAULT_START_POS_X = Game.STATUS_PANEL_X / 2;     // 初期の発射位置
-    private static DEFAULT_START_POS_Y = Game.FLOOR_Y - Ball.SIZE;
+    private static DEFAULT_START_POS_X = 0;    // 初期の発射位置
+    private static DEFAULT_START_POS_Y = 0;
     private static SCALE_KEY_PRESSED_SPEED = 1.6;  // スペースキーが押された時に何倍速にするか
     private static MOVE_VALUE_ON_HIT = 3;
     // static
@@ -29,6 +29,13 @@ export class BallManager {
         this.img_ball = src;
         this.blocks = list;
         this.balls = [];
+
+        if (!BallManager.DEFAULT_START_POS_X &&
+            !BallManager.DEFAULT_START_POS_Y) {
+            BallManager.DEFAULT_START_POS_X = Math.trunc(Game.STATUS_PANEL_X / 2);
+            BallManager.DEFAULT_START_POS_Y = Game.FLOOR_Y - Ball.SIZE;
+        }
+
         this.preLaunchPos = new Point(BallManager.DEFAULT_START_POS_X, BallManager.DEFAULT_START_POS_Y);
     }
 
