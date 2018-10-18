@@ -96,9 +96,7 @@ export class Ball extends Sprite {
     }
 
     public draw(g2d: CanvasRenderingContext2D) {
-        // g2d.drawImage(img, (int)x, (int)y, null);
         g2d.drawImage(this.img, Math.trunc(this.x), Math.trunc(this.y));
-        // g2d.setColor(java.awt.Color.RED);
     }
 
     public isPrepareLaunchPos() {
