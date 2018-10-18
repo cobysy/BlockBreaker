@@ -1,13 +1,40 @@
-export abstract class Sprite
-{
+export abstract class Sprite {
+
+    public static update(list: Sprite[]) {
+        try {
+            list.slice().forEach((s, index) => {
+                if (s.vanished) {
+                    list.splice(index, 1);
+                } else {
+                    s.update(1);
+                }
+            });
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    public static draw(list: Sprite[], g2d: CanvasRenderingContext2D) {
+        try {
+            list.slice().forEach((s, index) => {
+                if (s.vanished) {
+                    list.splice(index, 1);
+                } else if (s.visible) {
+                    s.draw(g2d);
+                }
+            });
+        } catch (e) {
+            console.error(e);
+        }
+    }
     protected x = 0;
     protected y = 0;
     private vanished = false;
     private visible = true;
 
-    public abstract update(eta: number);
+    public abstract update(eta: number): void;
 
-    public abstract draw(g2d: CanvasRenderingContext2D);
+    public abstract draw(g2d: CanvasRenderingContext2D): void;
 
     public isVanished() {
         return this.vanished;
@@ -42,35 +69,5 @@ export abstract class Sprite
     }
     public addY(vy: number) {
         return (this.y += vy);
-    }
-
-    public static update(list: Sprite[])
-    {
-        try {
-            list.slice().forEach((s, index) => {
-                if (s.vanished) {
-                    list.splice(index, 1);
-                } else {
-                    s.update(1);
-                }
-            });
-        } catch (e){
-            console.error(e);
-        }
-    }
-
-    public static draw(list: Sprite[], g2d: CanvasRenderingContext2D)
-    {
-        try {
-            list.slice().forEach((s, index) => {
-                if (s.vanished) {
-                    list.splice(index, 1);
-                } else if (s.visible) {
-                    s.draw(g2d);
-                }
-            });
-        } catch (e){
-            console.error(e);
-        }
     }
 }

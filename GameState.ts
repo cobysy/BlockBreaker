@@ -1,30 +1,28 @@
-import { Point } from './Point';
-import { BallManager } from './BallManager';
+import { BallManager } from "./BallManager";
+import { Point } from "./Point";
 
 // ゲームの状態
- export enum State
- {
+export enum State {
      MAIN_MENU,
      CLICK_WAIT,
      NOW_CLICKED,
      BALL_FLYING,
      BLOCK_DOWN,
      GAMEOVER,
-     RETURNABLE_TO_MENU
+     RETURNABLE_TO_MENU,
  }
 
 export class GameState {
-    public state: State;
-    public mousePos = new Point(); //クリックされた位置
-    public keyPressed_space = false; //スペースキーが押されていればtrue
+    public state = State.MAIN_MENU;
+    public mousePos = new Point(); // クリックされた位置
+    public keyPressed_space = false; // スペースキーが押されていればtrue
     public bonusPos: Point[] = [];
 
-    private waveCount = 0; //ターン数
-    private ballCount = 0; //ボールの数
-    private score = 0;     //スコア
+    private waveCount = 0; // ターン数
+    private ballCount = 0; // ボールの数
+    private score = 0;     // スコア
 
-    public init()
-    {
+    public init() {
         this.state = State.MAIN_MENU;
         this.keyPressed_space = false;
         this.waveCount = 1;
@@ -33,35 +31,27 @@ export class GameState {
         this.bonusPos = [];
     }
 
-    public countUpWave()
-    {
+    public countUpWave() {
         this.waveCount++;
     }
-    public getWaveCount()
-    {
+    public getWaveCount() {
         return this.waveCount;
     }
-    public getBallCount()
-    {
+    public getBallCount() {
         return this.ballCount;
     }
-    public setBallCount(n: number)
-    {
+    public setBallCount(n: number) {
         this.ballCount = n;
     }
 
-    public getScore()
-    {
+    public getScore() {
         return this.score;
     }
-    public addScore(n: number)
-    {
+    public addScore(n: number) {
         this.score += n;
     }
 
-
-    public toString()
-    {
+    public toString() {
         return this.state.toString() + " / " + this.mousePos.toString();
     }
 }

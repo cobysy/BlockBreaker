@@ -1,18 +1,14 @@
-import { BlockManager} from './BlockManager';
-import { BallManager} from './BallManager';
-import { ScoreRenderer} from './ScoreRenderer';
-import { SessionRenderer} from './SessionRenderer';
-import { State, GameState} from './GameState';
+import { BallManager} from "./BallManager";
+import { BlockManager} from "./BlockManager";
+import { GameState, State} from "./GameState";
+import { ScoreRenderer} from "./ScoreRenderer";
+import { SessionRenderer} from "./SessionRenderer";
 
 export class Game {
     public static WIDTH   = 720;      // ウィンドウサイズ
     public static HEIGHT  = 540;
-    public static FLOOR_Y = Game.HEIGHT - 30;  //床の座標
-    public static STATUS_PANEL_X = 520;   //ステータスパネルの座標
-    public url_menuMP3;
-    public url_mainGameMP3;
-    public url_explosion;
-    public url_coin;
+    public static FLOOR_Y = Game.HEIGHT - 30;  // 床の座標
+    public static STATUS_PANEL_X = 520;   // ステータスパネルの座標
     public static img_ball: HTMLImageElement;
     public static img_block: HTMLImageElement;
     public static img_bonusPanel: HTMLImageElement;
@@ -22,20 +18,32 @@ export class Game {
     public static img_gameover: HTMLImageElement;
     public static img_logo: HTMLImageElement;
     public static img_1up: HTMLImageElement;
+
+    public static main() {
+        // new Game(new GamePanel(Game.WIDTH, HEIGHT));
+
+        // tslint:disable-next-line:no-unused-expression
+        new Game();
+    }
+
+    private static RUNCHECK_INTERVAL = 120;
+    public url_menuMP3?: HTMLAudioElement;
+    public url_mainGameMP3?: HTMLAudioElement;
+    public url_explosion?: HTMLAudioElement;
+    public url_coin?: HTMLAudioElement;
     // private static Cursor cursor_DEFAULT, cursor_MY_CROSS;
     // private static final String RESOURCE = "/myGame/resources/";
 
-    //private final Component     screen;
+    // private final Component     screen;
     private blockManager: BlockManager;
     private ballManager: BallManager;
     private scoreRenderer: ScoreRenderer;
     private sessionRenderer: SessionRenderer;
 
     private gameState: GameState;
-    private static RUNCHECK_INTERVAL = 120;
     private runChecker = Game.RUNCHECK_INTERVAL;
 
-    //private MP3Player mp3Menu, mp3mainGame;
+    // private MP3Player mp3Menu, mp3mainGame;
 
     // static init() {    //最初に一度だけ実行: 画像,音声読み込み
     //     console.log("Game static init");
@@ -69,18 +77,11 @@ export class Game {
 
     private getTimestamp: () => number;
 
-    public static main()
-    {
-        //new Game(new GamePanel(Game.WIDTH, HEIGHT));
-        new Game();
-    }
-
-    //private Game(final BufferingRenderer renderer)
-    constructor()
-    {
+    // private Game(final BufferingRenderer renderer)
+    constructor() {
         this.gameState = new GameState();
         this.gameState.state = State.CLICK_WAIT;
-        //this.screen = (Component) renderer;
+        // this.screen = (Component) renderer;
         this.blockManager = new BlockManager(Game.img_block);
         this.ballManager = new BallManager(Game.img_ball, this.blockManager.getBlocks());
         this.scoreRenderer = new ScoreRenderer();
@@ -106,35 +107,33 @@ export class Game {
 
         if (window.performance.now) {
             console.log("Using high performance timer");
-            this.getTimestamp = function() { return window.performance.now(); };
+            this.getTimestamp = () => window.performance.now();
         } else {
             if ((window.performance as any).webkitNow) {
                 console.log("Using webkit high performance timer");
-                this.getTimestamp = function() { return window.performance.webkitNow(); };
+                this.getTimestamp = () => (window.performance as any).webkitNow();
             } else {
                 console.log("Using low performance timer");
-                this.getTimestamp = function() { return new Date().getTime(); };
+                this.getTimestamp = () => new Date().getTime();
             }
         }
 
         // test
         const canvas = new HTMLCanvasElement();
-        const g2d = canvas.getContext('2d');
-
+        const g2d = canvas.getContext("2d") as CanvasRenderingContext2D;
 
         // engine
 
         this.initialize();
 
-        let running = true;
+        const running = true;
         while (running) {
             this.update();
             this.render(g2d);
         }
     }
 
-    public initialize()
-    {
+    public initialize() {
         this.gameState.init();
         this.ballManager.init();
         this.blockManager.init();
@@ -142,16 +141,15 @@ export class Game {
         this.sessionRenderer.init();
         console.log("Game#initialied()   state: " + this.gameState.state);
 
-        //mp3Menu = new MP3Player(url_menuMP3, true); //タイトル画面の時のBGMをループ再生(別スレッド)
+        // mp3Menu = new MP3Player(url_menuMP3, true); //タイトル画面の時のBGMをループ再生(別スレッド)
     }
 
-    public update()
-    {
+    public update() {
         this.gameState = this.ballManager.update(this.gameState);
         this.gameState = this.blockManager.update(this.gameState);
         this.gameState = this.scoreRenderer.update(this.gameState);
 
-        //スscoreRenderer(テータスパネル描画)のターン数やボール数,スコアを更新
+        // スscoreRenderer(テータスパネル描画)のターン数やボール数,スコアを更新
         this.scoreRenderer.setWaveCount(this.gameState.getWaveCount());
         this.scoreRenderer.setBallCount(this.ballManager.getBallCount() );
         this.scoreRenderer.setScore(this.gameState.getScore());
@@ -166,15 +164,14 @@ export class Game {
         //      this.mp3mainGame = null;
         // }
 
-        //デバック用
+        // デバック用
         if (--this.runChecker < 0) {
             this.runChecker = Game.RUNCHECK_INTERVAL;
             console.log("[RUNNING] update()" + "\tstate: " + this.gameState.state);
         }
     }
 
-    public render(g2d: CanvasRenderingContext2D)
-    {
+    public render(g2d: CanvasRenderingContext2D) {
         g2d.drawImage(Game.img_hexagonBack, 0, 0);
         this.ballManager.draw(g2d);
         this.blockManager.draw(g2d);
@@ -190,7 +187,7 @@ export class Game {
                 break;
         }
 
-        //デバック用
+        // デバック用
 //        if (--runChecker < 0) {
 //            runChecker = RUNCHECK_INTERVAL;
 //            System.out.println("[RUNNING] render()");

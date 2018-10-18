@@ -1,18 +1,16 @@
-import { Sprite } from './Sprite';
-import { GameState } from './GameState';
-import { Game } from './Game';
-import { Block } from './Block';
-import { BonusPanel } from './BonusPanel';
+import { Block } from "./Block";
+import { BonusPanel } from "./BonusPanel";
+import { Game } from "./Game";
+import { GameState } from "./GameState";
+import { Sprite } from "./Sprite";
 
-class OneUP extends Sprite
-{
-    private static OPACITY_SUBTRACT_VALUE = 0.03; //1フレーム毎に透明化する値
-    private static Y_MOVE_VALUE        = 0.4; //上へ移動させる値(=vy)
+class OneUP extends Sprite {
+    private static OPACITY_SUBTRACT_VALUE = 0.03; // 1フレーム毎に透明化する値
+    private static Y_MOVE_VALUE        = 0.4; // 上へ移動させる値(=vy)
     private img: HTMLImageElement;
-    private oparity; //不透明度
+    private oparity = 1; // 不透明度
 
-    constructor(img: HTMLImageElement, x: number, y: number)
-    {
+    constructor(img: HTMLImageElement, x: number, y: number) {
         super();
         this.img = img;
         this.x = x;
@@ -20,8 +18,7 @@ class OneUP extends Sprite
         this.oparity = 1;
     }
 
-    public update(eta: number)
-    {
+    public update(eta: number) {
         this.y -= OneUP.Y_MOVE_VALUE;
         this.oparity -= OneUP.OPACITY_SUBTRACT_VALUE;
         if (this.oparity <= 0) {
@@ -29,8 +26,7 @@ class OneUP extends Sprite
         }
     }
 
-    public draw(g2d: CanvasRenderingContext2D)
-    {
+    public draw(g2d: CanvasRenderingContext2D) {
         // Composite defaultComposite = g2d.getComposite();
         // AlphaComposite composite
         //         = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)this.oparity);
@@ -42,20 +38,20 @@ class OneUP extends Sprite
     }
 }
 
+// tslint:disable-next-line:max-classes-per-file
 export class ScoreRenderer {
-    private ballCount;
-    private waveCount;
-    private score;
-    private bonusPoses: OneUP[];
 
     private static WIDTH_DIFF = Block.WIDTH - BonusPanel.WIDTH;
+    private ballCount = 0;
+    private waveCount = 1;
+    private score = 0;
+    private bonusPoses: OneUP[] = [];
 
     constructor() {
         this.init();
     }
 
-    public init()
-    {
+    public init() {
         this.ballCount = 0;
         this.waveCount = 1;
         this.score = 0;
@@ -63,26 +59,25 @@ export class ScoreRenderer {
         console.log("init() ScoreRenderer");
     }
 
-    public update(gameState: GameState)
-    {
+    public update(gameState: GameState) {
         Sprite.update(this.bonusPoses);
 
         const que = gameState.bonusPos;
-        while (que.length)
-        {
+        while (que.length) {
             const point = que.shift();
-            this.bonusPoses.push(new OneUP(
-                    Game.img_1up,
-                    point.x - ScoreRenderer.WIDTH_DIFF,
-                    point.y
-                    )
-            );
+            if (point) {
+                this.bonusPoses.push(new OneUP(
+                        Game.img_1up,
+                        point.x - ScoreRenderer.WIDTH_DIFF,
+                        point.y,
+                        ),
+                );
+            }
         }
         return gameState;
     }
 
-    public draw(g2d: CanvasRenderingContext2D)
-    {
+    public draw(g2d: CanvasRenderingContext2D) {
         Sprite.draw(this.bonusPoses, g2d);
 
         // g2d.drawImage(img, Game.STATUS_PANEL_X, 0, WIDTH, HEIGHT, null);
@@ -139,34 +134,27 @@ export class ScoreRenderer {
         // g2d.setFont(defaultFont);
     }
 
-    public getBallCount()
-    {
+    public getBallCount() {
         return this.ballCount;
     }
 
-    public setBallCount(ballCount: number)
-    {
+    public setBallCount(ballCount: number) {
         this.ballCount = ballCount;
     }
 
-    public getWaveCount()
-    {
+    public getWaveCount() {
         return this.waveCount;
     }
 
-    public setWaveCount(waveCount: number)
-    {
+    public setWaveCount(waveCount: number) {
         this.waveCount = waveCount;
     }
 
-
-    public getScore()
-    {
+    public getScore() {
         return this.score;
     }
 
-    public setScore(score: number)
-    {
+    public setScore(score: number) {
         this.score = score;
     }
 }
