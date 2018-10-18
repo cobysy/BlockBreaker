@@ -238,6 +238,28 @@ export class Game {
                         this.gameState.mousePos.y = y;
                     }
                     break;
+
+                // GameOverの後
+                case State.RETURNABLE_TO_MENU:
+                    this.gameState.state = State.MAIN_MENU;
+                    this.initialize();
+                    break;
+            }
+        });
+
+        document.addEventListener("keyup", (e) => {
+            const key = e.key || e.keyCode;
+            if (e.keyCode == 32) {
+                if (this.gameState.state != State.CLICK_WAIT) {
+                    this.gameState.keyPressed_space = true;
+                }
+            } else if (key == "Shift") {
+                // 初期のカーソル
+                if ((canvas.style.cursor || "").includes("url")) {
+                    canvas.style.cursor = "";
+                } else {
+                    canvas.style.cursor = "url('" + Game.img_cursor.src + "'), auto";
+                }
             }
         });
     }
