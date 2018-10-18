@@ -28,8 +28,8 @@ export class BlockManager {
     constructor(private src_img: HTMLImageElement) {
     }
 
-    public init() {
-        if (!BlockManager.img_blocks.length) {
+    private initResources(): Promise<void> {
+        return new Promise((resolve) => {
             for (let i = 0; i < BlockManager.NUM_BLOCK_COLOR; i++) {
                 const canvas = document.createElement("canvas");
                 canvas.width = Block.WIDTH;
@@ -46,9 +46,16 @@ export class BlockManager {
                 context.fillRect(0, 0, Block.WIDTH, Block.HEIGHT);
                 const cp = new Image();
                 cp.src = canvas.toDataURL();
-                console.log(cp.src);
                 BlockManager.img_blocks.push(cp);
+
+                resolve();
             }
+        });
+    }
+
+    public async init() {
+        if (!BlockManager.img_blocks.length) {
+            await this.initResources();
         }
 
         this.blocks = [];
@@ -61,6 +68,7 @@ export class BlockManager {
                     BlockManager.BONUS_PROBABILITY + 20,
                     BallManager.DEFAULT_BALL_COUNT));
         }
+
         // 上部の見えない部分のブロックを生成, フィールド初期化
         this.initDown(BallManager.DEFAULT_BALL_COUNT);
         console.log("init() BlockManager : num_blocks_count = " + this.blocks.length);

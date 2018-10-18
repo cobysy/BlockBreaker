@@ -23,7 +23,10 @@ export class Game {
     public static main() {
         // new Game(new GamePanel(Game.WIDTH, HEIGHT));
 
-        new Game().run();
+        const game = new Game();
+        (async () => {
+            game.run();
+        })();
     }
 
     private static RUNCHECK_INTERVAL = 120;
@@ -53,7 +56,7 @@ export class Game {
         });
     }
 
-    private init(): Promise<void> {    // 最初に一度だけ実行: 画像,音声読み込み
+    private initResources(): Promise<void> {    // 最初に一度だけ実行: 画像,音声読み込み
         console.log("Game static init");
 
         return new Promise((resolve) => {
@@ -110,12 +113,12 @@ export class Game {
         // this.screen = (Component) renderer;
     }
 
-    public run() {
-        this.init()
-            .then(() => this.runAfterResourcesLoaded());
+    public async run() {
+        await this.initResources();
+        await this.runAfterResourcesLoaded();
     }
 
-    private runAfterResourcesLoaded() {
+    private async runAfterResourcesLoaded() {
         this.blockManager = new BlockManager(Game.img_block);
         this.ballManager = new BallManager(Game.img_ball, this.blockManager.getBlocks());
         this.scoreRenderer = new ScoreRenderer();
@@ -156,11 +159,10 @@ export class Game {
             }
         }
 
+        // engine
         const g2d = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-        // engine
-
-        this.initialize();
+        await this.initialize();
 
         const running = true;
         while (running) {
@@ -170,10 +172,10 @@ export class Game {
         }
     }
 
-    public initialize() {
+    public async initialize() {
         this.gameState.init();
         this.ballManager.init();
-        this.blockManager.init();
+        await this.blockManager.init();
         this.scoreRenderer.init();
         this.sessionRenderer.init();
         console.log("Game#initialied()   state: " + this.gameState.state);

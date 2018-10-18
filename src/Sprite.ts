@@ -15,17 +15,17 @@ export abstract class Sprite {
     }
 
     public static draw(list: Sprite[], g2d: CanvasRenderingContext2D) {
-        try {
             list.slice().forEach((s, index) => {
-                if (s.vanished) {
+                try {
+                    if (s.vanished) {
                     list.splice(index, 1);
-                } else if (s.visible) {
-                    s.draw(g2d);
+                    } else if (s.visible) {
+                        s.draw(g2d);
+                    }
+                } catch (e) {
+                    console.error(e);
                 }
             });
-        } catch (e) {
-            console.error(e);
-        }
     }
     protected x = 0;
     protected y = 0;
