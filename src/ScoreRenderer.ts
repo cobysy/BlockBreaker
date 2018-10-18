@@ -1,3 +1,4 @@
+import { Ball } from "./Ball";
 import { Block } from "./Block";
 import { BonusPanel } from "./BonusPanel";
 import { Game } from "./Game";
@@ -42,6 +43,12 @@ class OneUP extends Sprite {
 export class ScoreRenderer {
 
     private static WIDTH_DIFF = Block.WIDTH - BonusPanel.WIDTH;
+    private static WIDTH = 0;
+    private static HEIGHT = 0;
+    private static BOTTOM_Y_STRING_WAVE = 30;
+    private static BOTTOM_Y_STRING_BALL = 160;
+    private static BOTTOM_Y_STRING_SCORE = 290;
+
     private ballCount = 0;
     private waveCount = 1;
     private score = 0;
@@ -49,6 +56,8 @@ export class ScoreRenderer {
 
     constructor() {
         this.init();
+        ScoreRenderer.WIDTH = (Game.WIDTH - Game.STATUS_PANEL_X) + 10; // ステータスパネルの幅
+        ScoreRenderer.HEIGHT = Game.HEIGHT + 40; // "WAVE"の文字列の下の座標
     }
 
     public init() {
@@ -80,58 +89,50 @@ export class ScoreRenderer {
     public draw(g2d: CanvasRenderingContext2D) {
         Sprite.draw(this.bonusPoses, g2d);
 
-        // g2d.drawImage(img, Game.STATUS_PANEL_X, 0, WIDTH, HEIGHT, null);
+        g2d.drawImage(Game.img_glossPanel, Game.STATUS_PANEL_X, 0, ScoreRenderer.WIDTH, ScoreRenderer.HEIGHT);
 
-        // // 初期の設定を保存し,他のクラスが安全な描画を出来るようにする
-        // final RenderingHints  defaultRenderingHints = g2d.getRenderingHints();
-        // final Font defaultFont = g2d.getFont();
-        // g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // 初期の設定を保存し,他のクラスが安全な描画を出来るようにする
 
-        // // 文字列の色は白
-        // g2d.setColor(Color.WHITE);
+        // 文字列の色は白
+        g2d.fillStyle = "white";
 
-        // //WAVE数の描画
-        // {
-        //     g2d.setFont(new Font(Font.MONOSPACED, Font.BOLD, 24));
-        //     g2d.drawString("WAVE:", Game.STATUS_PANEL_X + 20, BOTTOM_Y_STRING_WAVE);
+        // WAVE数の描画
+        {
+            g2d.font = "bold 20px sans-serif";
+            g2d.fillText("WAVE:", Game.STATUS_PANEL_X + 20, ScoreRenderer.BOTTOM_Y_STRING_WAVE);
 
-        //     g2d.setFont(new Font(Font.MONOSPACED, Font.BOLD, 40));
-        //     String S = String.valueOf(waveCount);
-        //     FontMetrics metrics = g2d.getFontMetrics();
-        //     Rectangle rect = metrics.getStringBounds(S, g2d).getBounds();
-        //     final int x = Game.STATUS_PANEL_X + (WIDTH / 2) - (rect.width / 2);
-        //     final int y = BOTTOM_Y_STRING_WAVE + metrics.getAscent() + 10;
-        //     g2d.drawString(S, x, y);
-        // }
-        // //BALLの数の描画
-        // {
-        //     g2d.setFont(new Font(Font.MONOSPACED, Font.BOLD, 24));
-        //     g2d.drawString("BALL  :", Game.STATUS_PANEL_X + 20, BOTTOM_Y_STRING_BALL);
-        //     g2d.drawImage(Game.img_ball, Game.STATUS_PANEL_X + 76, BOTTOM_Y_STRING_BALL - Ball.SIZE, null);
+            g2d.font = "bold 32px sans-serif";
+            const s = this.waveCount.toString();
+            const mea = g2d.measureText(s);
+            const x = Game.STATUS_PANEL_X + (ScoreRenderer.WIDTH / 2) - (mea.width / 2);
+            const y = ScoreRenderer.BOTTOM_Y_STRING_WAVE + 30;
+            g2d.fillText(s, x, y);
+        }
+        // BALLの数の描画
+        {
+            g2d.font = "bold 20px sans-serif";
+            g2d.fillText("BALL:", Game.STATUS_PANEL_X + 20, ScoreRenderer.BOTTOM_Y_STRING_BALL);
+            g2d.drawImage(Game.img_ball, Game.STATUS_PANEL_X + (ScoreRenderer.WIDTH / 2) - (Ball.SIZE / 2), ScoreRenderer.BOTTOM_Y_STRING_BALL - Ball.SIZE);
 
-        //     g2d.setFont(new Font(Font.MONOSPACED, Font.BOLD, 40));
-        //     String S = String.valueOf(ballCount);
-        //     FontMetrics metrics = g2d.getFontMetrics();
-        //     Rectangle rect = metrics.getStringBounds(S, g2d).getBounds();
-        //     final int x = Game.STATUS_PANEL_X + (WIDTH / 2) - (rect.width / 2);
-        //     final int y = BOTTOM_Y_STRING_BALL + metrics.getAscent() + 10;
-        //     g2d.drawString(S, x, y);
-        // }
-        // //SCOREの描画
-        // {
-        //     g2d.setFont(new Font(Font.MONOSPACED, Font.BOLD, 24));
-        //     g2d.drawString("SCORE:", Game.STATUS_PANEL_X + 20, BOTTOM_Y_STRING_SCORE);
+            g2d.font = "bold 32px sans-serif";
+            const s = this.ballCount.toString();
+            const mea = g2d.measureText(s);
+            const x = Game.STATUS_PANEL_X + (ScoreRenderer.WIDTH / 2) - (mea.width / 2);
+            const y = ScoreRenderer.BOTTOM_Y_STRING_BALL + 30;
+            g2d.fillText(s, x, y);
+        }
+        // SCOREの描画
+        {
+            g2d.font = "bold 20px sans-serif";
+            g2d.fillText("SCORE:", Game.STATUS_PANEL_X + 20, ScoreRenderer.BOTTOM_Y_STRING_SCORE);
 
-        //     g2d.setFont(new Font(Font.MONOSPACED, Font.BOLD, 40));
-        //     String S = String.valueOf(score);
-        //     FontMetrics metrics = g2d.getFontMetrics();
-        //     Rectangle rect = metrics.getStringBounds(S, g2d).getBounds();
-        //     final int x = Game.STATUS_PANEL_X + (WIDTH / 2) - (rect.width / 2);
-        //     final int y = BOTTOM_Y_STRING_SCORE + metrics.getAscent() + 10;
-        //     g2d.drawString(S, x, y);
-        // }
-        // g2d.setRenderingHints(defaultRenderingHints);
-        // g2d.setFont(defaultFont);
+            g2d.font = "bold 32px sans-serif";
+            const s = this.score.toString();
+            const mea = g2d.measureText(s);
+            const x = Game.STATUS_PANEL_X + (ScoreRenderer.WIDTH / 2) - (mea.width / 2);
+            const y = ScoreRenderer.BOTTOM_Y_STRING_SCORE + 30;
+            g2d.fillText(s, x, y);
+        }
     }
 
     public getBallCount() {

@@ -1,3 +1,4 @@
+import { Game } from "./Game";
 import { GameState, State } from "./GameState";
 
 export class SessionRenderer {
@@ -91,69 +92,51 @@ export class SessionRenderer {
 
     // フェードインが終わった後に描画する。最終的な結果を表示
     private drawScore(g2d: CanvasRenderingContext2D, score: number) {
-        // 初期の設定を保存して他のクラスが描画を安全に描画できるようにする
-        // final Font defaultFont = g2d.getFont();
-        // final RenderingHints defaultRenderingHints = g2d.getRenderingHints();
-        // g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // g2d.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 22));
-        // g2d.drawString("Click to MAIN-MENU...", 420, 520);
+        g2d.font = "bold 20px sans-serif";
+        g2d.fillStyle = "white";
 
-        // // "YOUR SCORE"の描画
-        // {
-        //     final String S = "YOUR SCORE";
-        //     g2d.setFont(new Font(Font.MONOSPACED, Font.BOLD, 30));
-        //     Rectangle rect = g2d.getFontMetrics().getStringBounds(S, g2d).getBounds();
-        //     g2d.drawString(S, Game.WIDTH / 2 - rect.width / 2, 370);
-        // }
-        // //実際のスコアの数値を描画
-        // {
-        //     final String S = String.valueOf(score);
-        //     g2d.setFont(new Font(Font.MONOSPACED, Font.BOLD, 86));
-        //     Rectangle rect = g2d.getFontMetrics().getStringBounds(S, g2d).getBounds();
-        //     g2d.drawString(S, Game.WIDTH / 2 - rect.width / 2, 460);
-        // }
+        g2d.fillText("Click to MAIN-MENU...", 420, 520);
 
-        // //保存しておいた初期の設定を再設定
-        // g2d.setRenderingHints(defaultRenderingHints);
-        // g2d.setFont(defaultFont);
+        // "YOUR SCORE"の描画
+        {
+            const s = "YOUR SCORE";
+            g2d.font = "bold 20px sans-serif";
+            const mea = g2d.measureText(s);
+            g2d.fillText(s, Game.WIDTH / 2 - mea.width / 2, 370);
+        }
+        // 実際のスコアの数値を描画
+        {
+            const s = score.toString();
+            g2d.font = "bold 75px sans-serif";
+            const mea = g2d.measureText(s);
+            g2d.fillText(s, Game.WIDTH / 2 - mea.width / 2, 460);
+        }
     }
 
     private drawMainMenu(g2d: CanvasRenderingContext2D) {
-        // g2d.drawImage(Game.img_logo, 0, 0, null);
+        g2d.drawImage(Game.img_logo, 0, 0);
 
-        // // 初期の設定を保存
-        // final Font defaultFont = g2d.getFont();
-        // final RenderingHints defaultRenderingHints = g2d.getRenderingHints();
-        // g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // 揺れる文字を描画
+        {
+            g2d.font = "bold 20px sans-serif";
+            g2d.fillStyle = "white";
 
-        // // 揺れる文字を描画
-        // {
-        //     g2d.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 24));
-        //     FontMetrics metrics = g2d.getFontMetrics();
-        //     Rectangle rect = metrics.getStringBounds(SessionRenderer.TEXT_MENU, g2d).getBounds();
-
-        //     final int x = Game.WIDTH / 2 - rect.width / 2; //中心
-        //     g2d.drawString(SessionRenderer.TEXT_MENU, x, (int)this.text_y);
-        // }
-
-        // //保存しておいた設定を再設定
-        // g2d.setRenderingHints(defaultRenderingHints);
-        // g2d.setFont(defaultFont);
+            const mea = g2d.measureText(SessionRenderer.TEXT_MENU);
+            const x = Game.WIDTH / 2 - mea.width / 2; // 中心
+            g2d.fillText(SessionRenderer.TEXT_MENU, x, this.text_y);
+        }
     }
 
     // GameOverの画像をフェードインして描画
     private drawGameOver(g2d: CanvasRenderingContext2D) {
-        // // 初期の設定を保存(透明度)
-        // final Composite defaultComposit =  g2d.getComposite();
+        // 初期の設定を保存(透明度)
+        g2d.save();
 
         // // 透明にするためのインスタンスを取得
-        // final AlphaComposite alphaComposite
-        //         = AlphaComposite.getInstance( AlphaComposite.SRC_OVER, (float)this.opacity);
+        g2d.globalAlpha = this.opacity;
+        g2d.drawImage(Game.img_gameover, 0, this.img_y);
 
-        // g2d.setComposite(alphaComposite);
-        // g2d.drawImage(Game.img_gameover, 0, (int)this.img_y, null);
-
-        // g2d.setComposite(defaultComposit);
+        g2d.restore();
     }
 }

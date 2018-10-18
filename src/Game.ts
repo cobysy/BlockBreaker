@@ -1,9 +1,9 @@
+import { Ball } from "./Ball";
 import { BallManager} from "./BallManager";
 import { BlockManager} from "./BlockManager";
 import { GameState, State} from "./GameState";
 import { ScoreRenderer} from "./ScoreRenderer";
 import { SessionRenderer} from "./SessionRenderer";
-import { Ball } from "./Ball";
 
 export class Game {
     public static WIDTH   = 720;      // ウィンドウサイズ
@@ -22,8 +22,6 @@ export class Game {
     public static img_cursor: HTMLImageElement;
 
     public static main() {
-        // new Game(new GamePanel(Game.WIDTH, HEIGHT));
-
         const game = new Game();
         (async () => {
             game.run();
@@ -67,6 +65,10 @@ export class Game {
                   Game.RESOURCE + "bonusPanel.png",
                   Game.RESOURCE + "hexagon-back.jpeg",
                   Game.RESOURCE + "floor.png",
+                  Game.RESOURCE + "gloss-panel.png",
+                  Game.RESOURCE + "gameover.jpg",
+                  Game.RESOURCE + "logo.jpeg",
+                  Game.RESOURCE + "1UP.png",
                   Game.RESOURCE + "cursor.png",
                  ].map(Game.checkImage))
             .then((r) => {
@@ -75,30 +77,16 @@ export class Game {
                 Game.img_bonusPanel = r.shift() as HTMLImageElement;
                 Game.img_hexagonBack = r.shift() as HTMLImageElement;
                 Game.img_floor = r.shift() as HTMLImageElement;
+                Game.img_glossPanel = r.shift() as HTMLImageElement;
+                Game.img_gameover = r.shift() as HTMLImageElement;
+                Game.img_logo = r.shift() as HTMLImageElement;
+                Game.img_1up = r.shift() as HTMLImageElement;
+
+                // マウスカーソル
                 Game.img_cursor = r.shift() as HTMLImageElement;
                 resolve();
             });
         });
-            // img_ball      = new ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "ball.png"));
-            // img_block       = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "block-dark.png"));
-            // img_bonusPanel  = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "bonusPanel.png"));
-            // Game.img_hexagonBack = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "hexagon-back.jpeg"));
-            // img_floor       = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "floor.png"));
-            // img_glossPanel  = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "gloss-panel.png"));
-            // img_gameover    = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "gameover.jpg"));
-            // img_logo        = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "logo.jpeg"));
-            // img_1up         = ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "1UP.png"));
-
-            // マウスカーソル
-            // cursor_MY_CROSS = Toolkit.getDefaultToolkit().createCustomCursor(
-            //         ImageIO.read(Game.class.getResourceAsStream(RESOURCE + "cursor.png")),
-            //         new Point(10, 10),
-            //         "myCrossCursor"
-            // );
-        // } catch (e) {
-        //     console.error(e);
-        // }
-        // cursor_DEFAULT = new Cursor(Cursor.DEFAULT_CURSOR);
         // url_menuMP3     = Game.class.getResource(RESOURCE + "dance.MP3");
         // url_mainGameMP3 = Game.class.getResource(RESOURCE + "digitalworld.MP3");
         // url_explosion   = Game.class.getResource(RESOURCE + "explosion.MP3");
@@ -134,18 +122,6 @@ export class Game {
 
         // マウスやキーのイベントリスナーの設定
         this.eventListenInit(canvas);
-        // this.screen.requestFocus();
-
-        // SwingUtilities.invokeLater(new Runnable() {
-        //     @Override
-        //     public void run()
-        //     {
-        //         GameEngine ge = new GameEngine(renderer, Game.this);
-        //         ge.setWindowTitle("Block breaker");
-        //         ge.setFps(68);
-        //         ge.start();
-        //     }
-        // });
 
         if (window.performance.now) {
             console.log("Using high performance timer");
