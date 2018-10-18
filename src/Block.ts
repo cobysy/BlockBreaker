@@ -4,7 +4,7 @@ import { Sprite } from "./Sprite";
 export class Block extends Sprite {
     public static WIDTH = 70;
     public static HEIGHT = 36;
-    public static FONT_SIZE = 28;
+    public static FONT_SIZE = 20;
     protected img: HTMLImageElement;
 
     private life: number;
@@ -48,28 +48,19 @@ export class Block extends Sprite {
     public draw(g2d: CanvasRenderingContext2D) {
         // g2d.drawImage(img, (int)x, (int)y, null);
         g2d.drawImage(this.img, Math.trunc(this.x), Math.trunc(this.y));
-        // drawHP(g2d);
+        this.drawHP(g2d);
     }
 
     private drawHP(g2d: CanvasRenderingContext2D) {
-        // RenderingHints defaultHints = g2d.getRenderingHints();
-        // g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        const s = this.life.toString();
+        g2d.font = "bold " + Block.FONT_SIZE + "px sans-serif";
+        g2d.fillStyle = "lightgray";
 
-        // {
-        //     String HP = String.valueOf(this.life);
-
-        //     Font font = new Font(Font.MONOSPACED, Font.BOLD, FONT_SIZE);
-        //     g2d.setFont(font);
-        //     g2d.setColor(Color.BLACK);
-
-        //     // 文字列を中心に描画する
-        //     FontMetrics metrics = g2d.getFontMetrics();
-        //     Rectangle rect = metrics.getStringBounds(HP, g2d).getBounds();
-        //     final int HPx = ((int)this.x + Block.WIDTH / 2) - (rect.width / 2);
-        //     final int HPy = ((int)this.y + Block.HEIGHT / 2) + metrics.getAscent() / 2;
-        //     g2d.drawString(HP, HPx, HPy);
-        // }
-
-        // g2d.setRenderingHints(defaultHints);
+        // 文字列を中心に描画する
+        const mea = g2d.measureText(s);
+        // g2d.globalCompositeOperation = "destination-out";
+        g2d.fillText(s, (this.x + Block.WIDTH / 2) - (mea.width / 2),
+                         this.y + 2 * Block.HEIGHT / 3);
+        // g2d.globalCompositeOperation = "source-over";
     }
 }
