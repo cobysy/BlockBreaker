@@ -21,13 +21,13 @@ export class BallManager {
 
     private preLaunchPos: Point; // 次の発射位置
     private anyLanded = false;  // ボールが1つでも着地したらtrue
-    private blocks: Block[]; // 当たり判定するblockのリスト
+    private getBlocks: () => Block[]; // 当たり判定するblockのリスト
     private num_newBall = 0;    // ターン終了時にリストに追加するボールの数
     private visibleBall?: Ball;
 
-    constructor(src: HTMLImageElement, list: Block[]) {
+    constructor(src: HTMLImageElement, getList: () => Block[]) {
         this.img_ball = src;
-        this.blocks = list;
+        this.getBlocks = getList;
         this.balls = [];
 
         if (!BallManager.DEFAULT_START_POS_X &&
@@ -175,8 +175,9 @@ export class BallManager {
 
         const eightPoints = new EightPointsCollisionState();
         const ballBounds = v.getBounds();
+        const blocks = this.getBlocks();
 
-        for (const b of this.blocks) {
+        for (const b of blocks) {
             // block の当たり判定矩形を取得
             const blockBounds = b.getBounds();
 

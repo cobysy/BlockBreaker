@@ -3,6 +3,7 @@ import { BlockManager} from "./BlockManager";
 import { GameState, State} from "./GameState";
 import { ScoreRenderer} from "./ScoreRenderer";
 import { SessionRenderer} from "./SessionRenderer";
+import { Ball } from "./Ball";
 
 export class Game {
     public static WIDTH   = 720;      // ウィンドウサイズ
@@ -109,8 +110,6 @@ export class Game {
     // private Game(final BufferingRenderer renderer)
     constructor() {
         this.gameState = new GameState();
-        this.gameState.state = State.CLICK_WAIT;
-        // this.screen = (Component) renderer;
     }
 
     public async run() {
@@ -120,7 +119,9 @@ export class Game {
 
     private async runAfterResourcesLoaded() {
         this.blockManager = new BlockManager(Game.img_block);
-        this.ballManager = new BallManager(Game.img_ball, this.blockManager.getBlocks());
+        this.ballManager = new BallManager(Game.img_ball, () => {
+                return this.blockManager.getBlocks();
+            });
         this.scoreRenderer = new ScoreRenderer();
         this.sessionRenderer = new SessionRenderer();
 
@@ -132,7 +133,7 @@ export class Game {
         canvas.style.cursor = "url('" + Game.img_cursor.src + "'), auto";
 
         // マウスやキーのイベントリスナーの設定
-        // this.eventListenInit(this.screen);
+        this.eventListenInit(canvas);
         // this.screen.requestFocus();
 
         // SwingUtilities.invokeLater(new Runnable() {
@@ -164,12 +165,13 @@ export class Game {
 
         await this.initialize();
 
-        const running = true;
-        while (running) {
+        const gameloop = () => {
             this.update();
             this.render(g2d);
-            break;
-        }
+            requestAnimationFrame(gameloop);
+        };
+
+        requestAnimationFrame(gameloop);
     }
 
     public async initialize() {
@@ -231,6 +233,37 @@ export class Game {
 //            runChecker = RUNCHECK_INTERVAL;
 //            System.out.println("[RUNNING] render()");
 //        }
+    }
+
+    private eventListenInit(canvas: HTMLCanvasElement) {
+        canvas.addEventListener("mousedown", (e: any) => {
+            e.preventDefault();
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // CLICK_WAITの時にマウスの左ボタンがクリックされたら gameState を変更
+            console.log("mouse: " + x + ", " + y + "   state: " + this.gameState.state);
+
+            switch (this.gameState.state) {
+                // タイトル画面でクリックされたらBGMを変更し,gameStateを変える
+                case State.MAIN_MENU:
+                    this.gameState.state = State.CLICK_WAIT;
+                    break;
+
+                // クリック待ち状態でクリックされた
+                case State.CLICK_WAIT:
+                    // ボタン,クリック位置の判定
+                    if ( y < Game.FLOOR_Y - (Ball.SIZE + 25)
+                            && x < Game.STATUS_PANEL_X) {
+                        this.gameState.state = State.NOW_CLICKED;
+                        this.gameState.mousePos.x = x;
+                        this.gameState.mousePos.y = y;
+                    }
+                    break;
+            }
+        });
     }
 
     // private void eventListenInit(final Component screen)

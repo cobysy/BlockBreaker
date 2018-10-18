@@ -18,7 +18,7 @@ export abstract class Sprite {
             list.slice().forEach((s, index) => {
                 try {
                     if (s.vanished) {
-                    list.splice(index, 1);
+                        list.splice(index, 1);
                     } else if (s.visible) {
                         s.draw(g2d);
                     }

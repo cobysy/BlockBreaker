@@ -87,7 +87,7 @@ export class BlockManager {
         Sprite.draw(this.blocks, g2d);
     }
 
-    public getBlocks() {
+    public getBlocks(): Block[] {
         return this.blocks;
     }
 

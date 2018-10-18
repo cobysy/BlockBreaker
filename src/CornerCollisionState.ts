@@ -39,6 +39,6 @@ export class CornerCollisionState {
             return Location.RIGHT_BOTTOM;
         } else {
             return Location.NIL;
-             }
+        }
     }
 }
